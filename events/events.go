@@ -29,3 +29,8 @@ func SubcribeCreatedContact(ctx context.Context) (<-chan CreatedContactMessage, 
 func OnCreatedContact(f func(CreatedContactMessage)) error {
 	return events.OnCreatedContact(f)
 }
+
+func Close() {
+	events.Close()
+}
+	
