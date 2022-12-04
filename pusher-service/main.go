@@ -10,7 +10,7 @@ import (
 )
 
 type Config struct {
-	NatsAddr string `envconfig:"NATS_ADRRESS"`
+	NatsAddr string `envconfig:"NATS_ADDRESS"`
 }
 
 func main() {
