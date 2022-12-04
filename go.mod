@@ -3,6 +3,7 @@ module contacts_cqrs
 go 1.19
 
 require (
+	github.com/elastic/go-elasticsearch/v7 v7.17.7 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.11.1 // indirect
