@@ -8,6 +8,7 @@ import (
 type RepositoryDB interface {
 	Close()
 	InsertCts(ctx context.Context, ct *models.Contact) error
+	ListContact(ctx context.Context) ([]*models.Contact, error)
 }
 
 var repo RepositoryDB
@@ -22,4 +23,8 @@ func Close() {
 
 func InsertCts(ctx context.Context, ct *models.Contact) error {
 	return repo.InsertCts(ctx, ct)
+}
+
+func ListContact(ctx context.Context) ([]*models.Contact, error) {
+	return repo.ListContact(ctx)
 }
