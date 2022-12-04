@@ -4,6 +4,8 @@ import (
 	"contacts_cqrs/models"
 	"context"
 	"database/sql"
+
+	_ "github.com/lib/pq"
 )
 
 type RepositoryPostgres struct {
