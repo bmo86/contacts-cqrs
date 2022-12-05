@@ -8,6 +8,7 @@ import (
 type RepositorySearch interface {
 	Close()
 	SearchIndex(ctx context.Context, ct *models.Contact) error
+	SearchQuery(ctx context.Context, query string) ([]models.Contact, error)
 }
 
 var elastic RepositorySearch
@@ -22,4 +23,8 @@ func Close() {
 
 func SearchIndex(ctx context.Context, ct *models.Contact) error {
 	return elastic.SearchIndex(ctx, ct)
+}
+
+func SearchQuery(ctx context.Context, query string) ([]models.Contact, error) {
+	return elastic.SearchQuery(ctx, query)
 }

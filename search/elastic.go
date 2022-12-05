@@ -5,6 +5,7 @@ import (
 	"contacts_cqrs/models"
 	"context"
 	"encoding/json"
+	"errors"
 	"strconv"
 
 	"github.com/elastic/go-elasticsearch/v7"
@@ -39,4 +40,61 @@ func (elas *ElasticRepo) SearchIndex(ctx context.Context, ct *models.Contact) er
 		elas.client.Index.WithRefresh("wait_for"),
 	)
 	return err
+}
+
+func (elas *ElasticRepo) SearchQuery(ctx context.Context, query string) (result []models.Contact, err error) {
+	var buf bytes.Buffer
+	searchQuery := map[string]interface{}{
+		"query": map[string]interface{}{
+			"multi_match": map[string]interface{}{
+				"query":            query,
+				"fields":           []string{"name", "lastname", "phone", "email"},
+				"fuzziness":        3,
+				"cutoff_frequency": 0.0001,
+			},
+		},
+	}
+
+	if err = json.NewEncoder(&buf).Encode(searchQuery); err != nil {
+		return nil, err
+	}
+
+	res, err := elas.client.Search(
+		elas.client.Search.WithContext(ctx),
+		elas.client.Search.WithIndex("contacts"),
+		elas.client.Search.WithBody(&buf),
+		elas.client.Search.WithTrackTotalHits(true),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		if err := res.Body.Close(); err != nil {
+			result = nil
+		}
+	}()
+
+	if res.IsError() {
+		return nil, errors.New("elastic error : " + res.String())
+	}
+
+	var eRes map[string]interface{}
+	if err := json.NewDecoder(res.Body).Decode(&eRes); err != nil {
+		return nil, err
+	}
+
+	var cts []models.Contact
+	for _, hit := range eRes["hits"].(map[string]interface{})["hits"].([]interface{}) {
+		ct := models.Contact{}
+		src := hit.(map[string]interface{})["_source"]
+		marshal, err := json.Marshal(src)
+		if err != nil {
+			return nil, err
+		}
+		if err := json.Unmarshal(marshal, &ct); err == nil {
+			cts = append(cts, ct)
+		}
+	}
+	return cts, nil
 }
