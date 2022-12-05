@@ -19,7 +19,9 @@ COPY means means
 COPY models models
 COPY nginx nginx
 COPY pusher-service pusher-service
+COPY query-service query-service
 COPY repository repository
+COPY search search
 
 RUN go install ./...
 
