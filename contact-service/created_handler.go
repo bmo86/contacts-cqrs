@@ -9,6 +9,8 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/go-playground/validator/v10"
 )
 
 type createdContactRequest struct {
@@ -54,4 +56,50 @@ func createdContactHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(ct)
+}
+
+func updateContactHandler(w http.ResponseWriter, r *http.Request) {
+	var req createdContactRequest
+
+	id := r.URL.Query().Get("id")
+	if len(id) == 0 {
+		means.MessageErr(http.StatusBadRequest, "id not input", w)
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		log.Fatal(err.Error())
+	}
+
+	dat := time.Now().UTC()
+	ct := models.Contact{
+		ID:         1,
+		Name:       req.Name,
+		Lastname:   req.Lastname,
+		Image:      req.Image,
+		Email:      req.Email,
+		Phone:      req.Phone,
+		Status:     req.Status,
+		CreatedAt:  dat,
+		UpdateData: dat,
+	}
+
+	valid := validator.New()
+
+	if err := valid.Struct(ct); err != nil {
+		means.MessageErr(http.StatusBadRequest, err.Error(), w)
+		return
+	}
+
+	if err := repository.UpdateCts(r.Context(), id, &ct); err != nil {
+		means.MessageErr(http.StatusInternalServerError, err.Error(), w)
+		return
+	}
+
+	if err := events.PublishCreatedContact(r.Context(), &ct); err != nil {
+		log.Printf("failed to publish created contact event : %s", err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode("Contacto Actualizado")
 }

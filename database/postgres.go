@@ -48,3 +48,8 @@ func (r *RepositoryPostgres) ListContact(ctx context.Context) ([]*models.Contact
 
 	return cts, nil
 }
+
+func (r *RepositoryPostgres) UpdateCts(ctx context.Context, id string, ct *models.Contact) error {
+	_, err := r.db.ExecContext(ctx, "UPDATE contacts SET name=$1, lastname=$2, image=$3, email=$4, phone=$5, status=$6, updateData=$7 WHERE id= $8", ct.Name, ct.Lastname, ct.Image, ct.Email, ct.Phone, ct.Status, ct.UpdateData, id)
+	return err
+}
