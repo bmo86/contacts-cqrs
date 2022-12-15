@@ -99,9 +99,7 @@ func updateContactHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("failed to publish created contact event : %s", err)
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode("Contacto Actualizado")
+	means.MessageSuccess(http.StatusOK, "Contacto Actualizado", w)
 }
 
 func deleteContactHandler(w http.ResponseWriter, r *http.Request) {
@@ -117,7 +115,5 @@ func deleteContactHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode("Contacto Eliminado!")
+	means.MessageSuccess(http.StatusOK, "Contacto Eliminado!", w)
 }

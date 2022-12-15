@@ -20,3 +20,18 @@ func MessageErr(code int, message string, w http.ResponseWriter) {
 	w.WriteHeader(code)
 	w.Write(msg)
 }
+
+func MessageSuccess(code int, message string, w http.ResponseWriter) {
+	fields := make(map[string]interface{})
+	fields["status"] = "success"
+	fields["message"] = message
+	msg, err := json.Marshal(fields)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("an error ocurred internally"))
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	w.Write(msg)
+}
