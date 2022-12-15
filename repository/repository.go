@@ -9,6 +9,7 @@ type RepositoryDB interface {
 	Close()
 	InsertCts(ctx context.Context, ct *models.Contact) error
 	UpdateCts(ctx context.Context, id string, ct *models.Contact) error
+	DeleteCts(ctx context.Context, id string) error
 	ListContact(ctx context.Context) ([]*models.Contact, error)
 }
 
@@ -32,4 +33,8 @@ func ListContact(ctx context.Context) ([]*models.Contact, error) {
 
 func UpdateCts(ctx context.Context, id string, ct *models.Contact) error {
 	return repo.UpdateCts(ctx, id, ct)
+}
+
+func DeleteCts(ctx context.Context, id string) error {
+	return repo.DeleteCts(ctx, id)
 }

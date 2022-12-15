@@ -23,6 +23,7 @@ func newRouter() (router *mux.Router) {
 	router = mux.NewRouter()
 	router.HandleFunc("/contacts", createdContactHandler).Methods(http.MethodPost)
 	router.HandleFunc("/contactsUpdate", updateContactHandler).Methods(http.MethodPut)
+	router.HandleFunc("/contacts", deleteContactHandler).Methods(http.MethodDelete)
 	return
 }
 

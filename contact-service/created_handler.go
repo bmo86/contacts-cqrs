@@ -103,3 +103,21 @@ func updateContactHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode("Contacto Actualizado")
 }
+
+func deleteContactHandler(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	if len(id) == 0 {
+		means.MessageErr(http.StatusBadRequest, "id not found", w)
+		return
+	}
+
+	if err := repository.DeleteCts(r.Context(), id); err != nil {
+		means.MessageErr(http.StatusInternalServerError, err.Error(), w)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode("Contacto Eliminado!")
+}

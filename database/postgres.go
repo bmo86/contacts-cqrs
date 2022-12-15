@@ -53,3 +53,8 @@ func (r *RepositoryPostgres) UpdateCts(ctx context.Context, id string, ct *model
 	_, err := r.db.ExecContext(ctx, "UPDATE contacts SET name=$1, lastname=$2, image=$3, email=$4, phone=$5, status=$6, updateData=$7 WHERE id= $8", ct.Name, ct.Lastname, ct.Image, ct.Email, ct.Phone, ct.Status, ct.UpdateData, id)
 	return err
 }
+
+func (r *RepositoryPostgres) DeleteCts(ctx context.Context, id string) error {
+	_, err := r.db.ExecContext(ctx, "DELETE FROM contacts WHERE id = $1", id)
+	return err
+}
